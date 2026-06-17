@@ -1,0 +1,12 @@
+{
+  "name": "dev-workflow",
+  "version": "0.1.0",
+  "description": "A portable dev workflow toolkit: branch/PR lifecycle skills (premerge, merge), a docs-sync skill, and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder).",
+  "author": {
+    "name": "Aleksey (gudik)",
+    "email": "ax.klim@gmail.com"
+  },
+  "homepage": "https://github.com/axklim/claude-plugins/tree/main/plugins/dev-workflow",
+  "repository": "https://github.com/axklim/claude-plugins",
+  "keywords": ["git", "pull-request", "workflow", "code-review", "documentation", "conventional-commits"]
+}
