@@ -15,10 +15,12 @@ Take a merge-ready branch (typically straight after `/premerge`) the last mile: 
 PR into `main`, then return the repo to a clean baseline.
 
 **GitHub is the gatekeeper for whether a PR *can* merge** — branch protection, required checks,
-conflicts. This skill doesn't re-implement those checks; it attempts the merge and respects
-GitHub's verdict (if GitHub refuses, it stops and surfaces why). What it adds is **one
-confirmation before the merge**, because a push to `main` typically triggers CI (a release
-build, an image push, a deploy), so the merge reaches beyond the repo.
+required reviews, conflicts. This skill doesn't re-implement those checks; it attempts the merge
+and respects GitHub's verdict (if GitHub refuses, it stops and surfaces why). It runs
+**unattended**: invoking `/merge` is your go-ahead, and the PR's own approval/branch-protection
+state is the human checkpoint — so it doesn't ask again before merging. A push to `main` may
+trigger CI (a release build, an image push, a deploy); that's expected, and GitHub's gate already
+governs whether the merge is allowed at all.
 
 ## Workflow
 
@@ -33,10 +35,10 @@ gh pr view --json number,state,title,url
 
 If there's no open PR for the branch, stop and say so — there's nothing to merge.
 
-### 2. Merge the PR — confirm first
+### 2. Merge the PR
 
-Merging changes the protected `main` branch and usually triggers a release build or deploy, so
-**confirm with the user before merging** (and that the branch is deleted as part of it). Then:
+Merge straight away — **no confirmation prompt**. The `/merge` invocation is the go-ahead, and
+the PR's approval/branch-protection state is GitHub's call, so don't re-ask before merging:
 
 ```bash
 gh pr merge <n> --rebase --delete-branch
