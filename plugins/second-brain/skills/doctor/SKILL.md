@@ -36,5 +36,14 @@ verdict and the single next action for any failure. Read-only — make no change
 6. **Pending queue (informational).** Count `inbox/*.md` (excluding `.keep`) — how many captured
    sessions are waiting for `/second-brain:file-inbox`.
 
-End with **Overall: capture is LIVE** (vault_path resolves, writable, recent capture present) or
-**Overall: capture is NOT live**, followed by the one fix to apply.
+7. **Recall instruction wired?** `grep -q '<!-- second-brain:recall -->' ~/.claude/CLAUDE.md 2>/dev/null`.
+   - found → **PASS**: cross-session recall is enabled (show the marked block). If the vault path
+     inside the block differs from the resolved `vault_path`, **WARN** it is stale and offer to
+     refresh it.
+   - not found → **WARN**: "recall is not wired into `~/.claude/CLAUDE.md` — Claude won't consult
+     the vault from other projects. Run `/second-brain:init-vault` (it offers to add it), or paste
+     the block from the plugin's `assets/recall-instruction.md` (replace `<VAULT_PATH>`)."
+
+End with **Overall: capture is LIVE / NOT live** (vault_path resolves, writable, recent capture
+present) and **recall is WIRED / NOT wired** (the `~/.claude/CLAUDE.md` block), followed by the
+one fix to apply for each that is not green.

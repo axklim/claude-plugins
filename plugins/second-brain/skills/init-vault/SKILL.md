@@ -44,6 +44,18 @@ Scaffold a new, empty vault from the plugin's bundled template.
    Sessions run *inside* the vault are intentionally skipped (self-capture guard), so the user
    should work in their other projects to generate captures.
 
-7. **Report:** the created path, the files scaffolded, the resolved capture target (or the
-   warning that `vault_path` is not yet set), and the next steps — run `/second-brain:doctor` to
-   confirm capture is live, then `/second-brain:file-inbox` after some sessions accumulate.
+7. **Wire cross-session recall (offer).** So Claude can consult the brain from *other* projects,
+   the recall block must live in `~/.claude/CLAUDE.md` (the user-scope memory loaded in every
+   session). Render `$CLAUDE_PLUGIN_ROOT/assets/recall-instruction.md`, replacing every
+   `<VAULT_PATH>` with the resolved vault path.
+   - If `~/.claude/CLAUDE.md` already contains `<!-- second-brain:recall -->`, say recall is
+     already wired (offer to refresh the block if the vault path changed).
+   - Otherwise show the rendered block and **offer to append it** to `~/.claude/CLAUDE.md`. Append
+     ONLY on explicit user confirmation (create the file if absent); else print it for the user to
+     paste. Never touch anything outside the marked block.
+   Explain: without this, recall works only while working inside the vault itself.
+
+8. **Report:** the created path, the files scaffolded, the resolved capture target (or the
+   warning that `vault_path` is not yet set), whether the recall block is now wired into
+   `~/.claude/CLAUDE.md`, and the next steps — run `/second-brain:doctor` to confirm capture +
+   recall, then `/second-brain:file-inbox` after some sessions accumulate.
