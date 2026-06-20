@@ -1,10 +1,6 @@
 ---
 name: init-vault
-description: >-
-  Scaffold a fresh, empty second-brain Obsidian vault from the plugin's bundled template
-  (folder layout, CLAUDE.md conventions, index.md, .obsidian config, .gitignore) and git-init
-  it. Run this once when setting up a new vault, optionally passing the target directory, e.g.
-  "/second-brain:init-vault ~/notes/brain". Refuses to overwrite a non-empty directory.
+description: Scaffold a fresh second-brain vault from the plugin's bundled template and git-init it. Run once when setting up a new vault, optionally passing the target directory.
 ---
 
 # Initialize a second-brain vault

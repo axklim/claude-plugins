@@ -25,7 +25,7 @@ plugins become installable in any project, on any machine or account.
 | Plugin | What it gives you |
 |--------|-------------------|
 | [`dev-workflow`](plugins/dev-workflow) | Branch/PR lifecycle skills (`/premerge`, `/merge`), a docs-sync skill (`/docs`), and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder). |
-| [`second-brain`](plugins/second-brain) | An Obsidian-vault memory system: a `SessionEnd` hook captures sessions to `raw/`, and `/second-brain:file-inbox` files them into a topical wiki + temporal journal. Scaffold a fresh vault with `/second-brain:init-vault`. |
+| [`second-brain`](plugins/second-brain) | An LLM-wiki memory pattern: a `SessionEnd` hook captures every session, then skills file it into a topical wiki + temporal journal. Plain Markdown — view in Obsidian or any editor. |
 
 ## Layout
 

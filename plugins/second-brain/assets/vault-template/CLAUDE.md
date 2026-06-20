@@ -55,8 +55,6 @@ This is the core convention for the vault.
 ## Commits & branches
 
 Use **Conventional Commits** with the note's topic as the scope: `type(<topic>): summary`.
-This overrides the global ticket-number/`NOJIRA` convention for this repo — neither commit
-titles nor branch names need a ticket or `NOJIRA` prefix here.
 
 - `feat(<topic>):` — add a new note or new knowledge to a topic
 - `docs(<topic>):` — expand or clarify an existing note

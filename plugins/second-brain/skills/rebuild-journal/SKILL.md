@@ -1,11 +1,6 @@
 ---
 name: rebuild-journal
-description: >-
-  Re-extract one or more captured sessions and merge their work into the journal day-files,
-  non-destructively (never deletes a journal file). Run from inside a second-brain vault, naming
-  the session ids to rebuild, e.g. "/second-brain:rebuild-journal <sid>, <sid>". To force a clean
-  reformat of a day, the user deletes that day-file first, then runs this naming every session
-  that touched it.
+description: Re-extract named sessions and merge their work into the journal day-files, non-destructively. Run from a second-brain vault, naming the session ids to rebuild.
 ---
 
 # Rebuild journal day-files

@@ -1,10 +1,6 @@
 ---
 name: file-inbox
-description: >-
-  File queued session transcripts from the vault's inbox/ into the topical wiki (via the
-  librarian) and the temporal journal (via the journal extractor→grouper), then commit. Run
-  this from inside a second-brain vault when you want to file captured sessions. Owns the
-  single commit; the subagents never commit.
+description: File the vault's pending inbox/ queue into the wiki and journal, then commit. Run from a second-brain vault to file captured sessions.
 ---
 
 # File the inbox

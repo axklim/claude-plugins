@@ -1,8 +1,9 @@
 # second-brain
 
-A personal memory system for Claude Code, built on an Obsidian vault. A `SessionEnd` hook
-captures every session verbatim to the vault's `raw/`; on demand, skills distill the queue into
-a **topical wiki** (what you know about X) and a **temporal journal** (when/what you did).
+A personal memory system for Claude Code. A `SessionEnd` hook captures every session verbatim to
+the vault's `raw/`; on demand, skills distill the queue into a **topical wiki** (what you know
+about X) and a **temporal journal** (when/what you did) — plain Markdown you can browse in
+Obsidian or any editor.
 
 Extracted and generalized so it works in any vault, on any machine or account.
 
@@ -45,11 +46,11 @@ enqueues an `inbox/` pointer. No LLM, fast and deterministic.
 
 # 3. Set your vault path when prompted (userConfig: vault_path),
 #    or create a fresh vault and point at it:
-/second-brain:init-vault ~/notes/brain
+/second-brain:init-vault ~/Documents/second-brain
 ```
 
 Then work normally in your other projects — sessions auto-capture to the vault. When you want to
-file them: `/second-brain:file-inbox`. Pull updates later with `/plugin update`.
+file them: `/second-brain:file-inbox`.
 
 ## How the pieces fit
 
@@ -65,7 +66,7 @@ every session ──(SessionEnd hook)──> raw/ + inbox/ pointer
 
 ## Notes & assumptions
 
-- **It's an Obsidian vault**, not a code repo: topic folders, atomic notes, `[[wikilinks]]`, YAML
+- **It's a Markdown knowledge vault** (browse in Obsidian or any editor), not a code repo: topic folders, atomic notes, `[[wikilinks]]`, YAML
   frontmatter. The scaffolded `CLAUDE.md` documents the conventions.
 - **The capture hook is global** — it fires on every session and writes to your configured
   `vault_path`. With no vault configured it is a silent no-op. Sessions run *inside* the vault are

@@ -13,7 +13,7 @@
     {
       "name": "second-brain",
       "source": "./plugins/second-brain",
-      "description": "Obsidian-vault personal memory: a SessionEnd capture hook plus skills that file sessions into a topical wiki and temporal journal (librarian + journal extractor/grouper), with an init-vault scaffold."
+      "description": "Personal memory for Claude Code: a SessionEnd hook captures every session, then skills file it into a topical wiki + temporal journal (librarian + journal extractor/grouper). Plain Markdown — view in any editor."
     }
   ]
 }
