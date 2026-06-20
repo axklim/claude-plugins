@@ -172,6 +172,8 @@ test_noop_when_vault_unset() {
     | env -u SECOND_BRAIN_VAULT bash "$HOOK" 2>&1)"; rc=$?
   assert_eq "$rc" "0" "unconfigured hook exits 0 (silent no-op)"
   assert_eq "$out" ""  "unconfigured hook prints nothing"
+  assert_no_path "$(dirname "$t")/raw"   "unconfigured hook writes no raw/"
+  assert_no_path "$(dirname "$t")/inbox" "unconfigured hook writes no inbox/"
 }
 
 # --- runner (bash 3.2: no mapfile/arrays) ---
