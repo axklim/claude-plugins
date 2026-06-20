@@ -1,0 +1,19 @@
+{
+  "name": "second-brain",
+  "version": "0.1.0",
+  "description": "An Obsidian-vault personal memory system for Claude Code: a SessionEnd hook captures every session to raw/, and skills file the queue into a topical wiki and a temporal journal via three subagents (librarian, journal-extractor, journal-grouper).",
+  "author": {
+    "name": "Aleksey (gudik)",
+    "email": "ax.klim@gmail.com"
+  },
+  "homepage": "https://github.com/axklim/claude-plugins/tree/main/plugins/second-brain",
+  "repository": "https://github.com/axklim/claude-plugins",
+  "keywords": ["obsidian", "knowledge-base", "notes", "journal", "memory", "session-capture", "second-brain"],
+  "userConfig": {
+    "vault_path": {
+      "type": "directory",
+      "title": "Second-brain vault path",
+      "description": "Absolute path to your Obsidian second-brain vault. Leave empty to disable session capture until you run /second-brain:init-vault."
+    }
+  }
+}
