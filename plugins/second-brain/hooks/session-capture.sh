@@ -50,7 +50,24 @@ project="$(basename "$cwd")"
 case "$project" in ""|".") project="unknown";; esac
 hash="$(shasum -a 256 "$transcript" | cut -d' ' -f1 | cut -c1-8)"
 
-raw_dir="$VAULT_ROOT/raw/$hook/$month"
+# --- anchor all versions of a sid to ONE dir + identity ---
+# A later version can compute a different start-month (capture-time fallback vs a real
+# earliest timestamp), which would split a sid's versions, metadata, and pointer across
+# month dirs. Reuse any dir already holding this sid, and adopt the canonical start_date/
+# project from its write-once metadata, so every version of a sid stays unified.
+existing="$(ls "$VAULT_ROOT/raw/$hook/"*/"$sid".metadata.json 2>/dev/null | head -1)"
+[ -n "$existing" ] || existing="$(ls "$VAULT_ROOT/raw/$hook/"*/"$sid".*.jsonl 2>/dev/null | head -1)"
+if [ -n "$existing" ]; then
+  raw_dir="$(cd "$(dirname "$existing")" && pwd)"
+  month="$(basename "$raw_dir")"
+  prior_meta="$raw_dir/$sid.metadata.json"
+  if [ -f "$prior_meta" ]; then
+    sd="$(jq -r '.start_date // empty' "$prior_meta" 2>/dev/null)"; [ -n "$sd" ] && start_date="$sd"
+    pj="$(jq -r '.project // empty' "$prior_meta" 2>/dev/null)"; [ -n "$pj" ] && project="$pj"
+  fi
+else
+  raw_dir="$VAULT_ROOT/raw/$hook/$month"
+fi
 mkdir -p "$raw_dir"
 target="$raw_dir/$sid.$hash.jsonl"
 hookjson="$raw_dir/$sid.$hash.hook.json"

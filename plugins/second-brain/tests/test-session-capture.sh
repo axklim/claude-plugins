@@ -191,6 +191,31 @@ test_noop_when_vault_empty_arg() {
   assert_no_path "$(dirname "$t")/inbox" "empty-arg hook writes no inbox/"
 }
 
+# --- month-split regression: all versions of a sid anchor to ONE dir ---
+fixture_dated() {   # $1=file  $2=ISO-8601 timestamp
+  {
+    printf '%s\n' '{"type":"last-prompt","sessionId":"x"}'
+    printf '%s\n' "{\"type\":\"user\",\"timestamp\":\"$2\",\"message\":\"hi\"}"
+  } > "$1"
+}
+
+test_split_month_versions() {
+  local vault sid cwd m1 v1 v2 dir
+  vault="$(new_dir)"; sid="abababab-abab-abab-abab-abababababab"; cwd="$(new_dir)"
+  m1="$(date -u +%Y-%m)"
+  # V1: no timestamps → captured under the capture-time month ($m1).
+  v1="$vault/v1.jsonl"; fixture_stub "$v1"
+  run_hook "$vault" "$sid" "$v1" "$cwd"
+  # V2: a real timestamp in a DIFFERENT month → must anchor to V1's dir, not split.
+  v2="$vault/v2.jsonl"; fixture_dated "$v2" "2020-01-15T10:00:00.000Z"
+  run_hook "$vault" "$sid" "$v2" "$cwd"
+  dir="$vault/raw/SessionEnd/$m1"
+  assert_eq "$(ls "$dir/$sid".*.jsonl 2>/dev/null | wc -l | tr -d ' ')" "2" "both versions anchored to one dir ($m1)"
+  assert_no_path "$vault/raw/SessionEnd/2020-01" "no split into the timestamp-derived month"
+  assert_eq "$(ls "$dir/$sid".metadata.json 2>/dev/null | wc -l | tr -d ' ')" "1" "single metadata.json"
+  assert_eq "$(ls "$vault/inbox/"*"-$sid.md" 2>/dev/null | wc -l | tr -d ' ')" "1" "single inbox pointer"
+}
+
 # --- runner (bash 3.2: no mapfile/arrays) ---
 if [ "$#" -eq 0 ]; then set -- $(declare -F | awk '{print $3}' | grep '^test_' | sort); fi
 for _t in "$@"; do "$_t"; done
