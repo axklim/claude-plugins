@@ -158,6 +158,7 @@ test_vault_via_positional_arg() {
     '{session_id:$sid, transcript_path:$t, cwd:$cwd, hook_event_name:"SessionEnd", reason:"other"}' \
   | env -u SECOND_BRAIN_VAULT bash "$HOOK" "$vault"
   h="$(short_hash "$t")"
+  # the 2026-06 / 2026-06-30 dates below derive from fixture_realistic's earliest timestamp
   assert_file "$vault/raw/SessionEnd/2026-06/$sid.$h.jsonl" "vault resolved from positional arg \$1"
   assert_file "$vault/inbox/2026-06-30-$proj-$sid.md"       "pointer written when vault via \$1"
 }
@@ -174,6 +175,20 @@ test_noop_when_vault_unset() {
   assert_eq "$out" ""  "unconfigured hook prints nothing"
   assert_no_path "$(dirname "$t")/raw"   "unconfigured hook writes no raw/"
   assert_no_path "$(dirname "$t")/inbox" "unconfigured hook writes no inbox/"
+}
+
+test_noop_when_vault_empty_arg() {
+  local sid t cwd out rc
+  sid="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+  t="$(new_dir)/t.jsonl"; fixture_realistic "$t"; cwd="$(new_dir)"
+  # hooks.json passes "" as $1 when vault_path is unset → must no-op exactly like the unset case.
+  out="$(jq -nc --arg sid "$sid" --arg t "$t" --arg cwd "$cwd" \
+    '{session_id:$sid, transcript_path:$t, cwd:$cwd, hook_event_name:"SessionEnd", reason:"other"}' \
+    | env -u SECOND_BRAIN_VAULT bash "$HOOK" "" 2>&1)"; rc=$?
+  assert_eq "$rc" "0" "empty-arg hook exits 0 (silent no-op)"
+  assert_eq "$out" ""  "empty-arg hook prints nothing"
+  assert_no_path "$(dirname "$t")/raw"   "empty-arg hook writes no raw/"
+  assert_no_path "$(dirname "$t")/inbox" "empty-arg hook writes no inbox/"
 }
 
 # --- runner (bash 3.2: no mapfile/arrays) ---
