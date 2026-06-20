@@ -17,10 +17,11 @@ Work from the vault root.
 You are given one **session id (sid)** and the path to its `raw/` directory. A sid maps to ONE
 OR MORE version files `raw/<...>/<sid>.<hash>.jsonl` (one per captured end-state).
 
-## Step 1 — Reconcile the session's versions (shared procedure)
+## Step 1 — Reconcile the session's versions
 Glob `<sid>.*.jsonl` in the raw dir. If there are several, reconcile them into one coherent
 view: take the **fullest** version as the basis and recover any context a compacted/divergent
-version dropped. (Same reconciliation the librarian does.)
+version dropped. Skip and report any session whose versions won't parse. (Core reconciliation
+logic mirrors the librarian's — keep the two in sync.)
 
 Transcript lines are JSONL; message text is in `.message.content`: a **string** (use directly)
 or an **array of blocks** — concatenate the `.text` of `text` blocks; for

@@ -21,12 +21,13 @@ You own the `wiki/` and its metadata provenance ONLY:
 You are handed a set of **sessions** to file (each: a sid and its `raw/` dir) — you do NOT read
 `inbox/`. A sid maps to ONE OR MORE version files `raw/<...>/<sid>.<hash>.jsonl`.
 
-**Version reconciliation (shared procedure):** glob `<sid>.*.jsonl`; if several, reconcile into
-one coherent view — fullest version as basis, recover any context a compacted/divergent version
-dropped. List every reconciled version's jsonl in a note's `source`. Transcript lines are JSONL;
-message text is in `.message.content`: a **string** (use directly) or an **array of blocks** —
-concatenate the `.text` of `text` blocks; summarise `tool_use`/`tool_result`/`thinking`/`image`
-blocks at most. Skip and report any session whose versions won't parse.
+**Version reconciliation** (core logic mirrors the journal-extractor's Step 1 — keep the two in
+sync): glob `<sid>.*.jsonl`; if several, reconcile into one coherent view — fullest version as
+basis, recover any context a compacted/divergent version dropped. Skip and report any session
+whose versions won't parse. Transcript lines are JSONL; message text is in `.message.content`:
+a **string** (use directly) or an **array of blocks** — concatenate the `.text` of `text`
+blocks; summarise `tool_use`/`tool_result`/`thinking`/`image` blocks at most. (Librarian-only:
+list every reconciled version's jsonl in a note's `source`.)
 
 ## Step 1 — Wiki (topical index), atomic + linked
 Write durable knowledge as atomic notes. **Keep signal, skip noise** (a trivial/empty session
