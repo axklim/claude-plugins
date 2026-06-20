@@ -1,6 +1,6 @@
 {
   "name": "second-brain",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Personal memory for Claude Code: a SessionEnd hook captures every session to raw/, then skills file the queue into a topical wiki and a temporal journal via three subagents (librarian, journal-extractor, journal-grouper). Plain Markdown notes — view in any editor (Obsidian optional).",
   "author": {
     "name": "Aleksey (gudik)",

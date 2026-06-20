@@ -44,6 +44,11 @@ A `SessionEnd` command hook (`hooks/hooks.json`) runs `hooks/session-capture.sh`
 session: it copies the transcript into `raw/<event>/<YYYY-MM>/`, writes write-once metadata, and
 enqueues an `inbox/` pointer. No LLM, fast and deterministic.
 
+A `SessionStart` command hook (`hooks/session-context.sh`) injects the plugin's canonical vault
+conventions (`assets/vault-conventions.md`) into context **when you're working inside the vault**,
+so the conventions always match the installed plugin version and update with `/plugin update`. The
+scaffolded vault's own `CLAUDE.md` is just a thin stub. Outside the vault this hook does nothing.
+
 ## Setup
 
 ```bash
@@ -60,6 +65,14 @@ enqueues an `inbox/` pointer. No LLM, fast and deterministic.
 
 Then work normally in your other projects — sessions auto-capture to the vault. When you want to
 file them: `/second-brain:file-inbox`.
+
+## Recall in other projects
+
+Capture and conventions cover working *inside* the vault. To let Claude consult the brain from
+*other* projects, add a small recall block to your user-scope `~/.claude/CLAUDE.md`:
+`/second-brain:init-vault` offers to add it for you, and `/second-brain:doctor` reports whether
+it's wired. The block tells Claude where the vault is and how to query it on demand (journal for
+"what/when", wiki for "what do I know about X"). It's the canonical `assets/recall-instruction.md`.
 
 ## How the pieces fit
 
