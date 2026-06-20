@@ -69,7 +69,7 @@ Branches: short descriptive names with no prefix (e.g. `add-claude-md`, `feat/<t
 
 This vault is the **Layer-3 library** of a personal memory system. Sessions are captured
 automatically (a global `SessionEnd` hook copies transcripts to `raw/` + queues a pointer in
-`inbox/`), and filed on demand by running **`/file-inbox`**, which dispatches the `librarian`
+`inbox/`), and filed on demand by running **`/second-brain:file-inbox`**, which dispatches the `librarian`
 (topical `wiki/`) and the journal pipeline (`journal-extractor` → `journal-grouper`, the
 temporal `journal/`). The command owns the single commit; the subagents never commit.
 
@@ -77,14 +77,14 @@ temporal `journal/`). The command owns the single commit; the subagents never co
   Day-files group work by **project → theme**, link wiki notes with bare `[[name]]`, and carry
   a hidden `<!-- sessions: ... -->` footer (provenance). They are maintained **incrementally**
   (new work is merged in, deduped) — existing content and any manual edits are preserved.
-- **To re-derive a session's journal:** run **`/rebuild-journal <sid>, ...`** — it re-extracts
+- **To re-derive a session's journal:** run **`/second-brain:rebuild-journal <sid>, ...`** — it re-extracts
   those sessions and merges their bullets into the day-files (non-destructive; never deletes).
-  To reformat a day cleanly, delete that day-file yourself and run `/rebuild-journal` naming
+  To reformat a day cleanly, delete that day-file yourself and run `/second-brain:rebuild-journal` naming
   every session that touched it.
 - **To find what you know about X:** start at root `index.md` → `wiki/index.md` → the topic's
   `index.md` → the note. Navigate by `summary:` frontmatter and the MOC index files.
 - **Cite on answer:** when you answer from the wiki, point at the source note and its `source:`
   provenance — verify, don't trust. The `raw/` transcript is ground truth.
 - `raw/` (verbatim archive) and `inbox/` (transient, gitignored queue) are machine folders —
-  don't hand-edit them. Prefer running `/file-inbox` over hand-filing.
+  don't hand-edit them. Prefer running `/second-brain:file-inbox` over hand-filing.
 - **Never store knowledge content in this file.** `CLAUDE.md` holds instructions only.
