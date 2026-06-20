@@ -7,6 +7,14 @@ Obsidian or any editor.
 
 Extracted and generalized so it works in any vault, on any machine or account.
 
+> **⚠️ Privacy — the vault repo is secret-bearing.** Capture is global: every session in every
+> project is copied **verbatim** into `raw/**/*.jsonl` and committed to git. Only the derived
+> `wiki/`/`journal/` notes are secret-redacted — `raw/` is **not**. Any API key, token, `.env`
+> echo, or confidential paste from any session lands in git **history** and survives later
+> deletion. **Keep the vault in a private repo; never push it to a shared remote.** `raw/` is
+> intentionally tracked (both `file-inbox` and `rebuild-journal` read from it), so it can't simply
+> be gitignored without breaking cross-machine use. Run `/second-brain:doctor` to confirm capture.
+
 ## What's inside
 
 ### Skills (slash commands)
@@ -18,6 +26,7 @@ Namespaced under the plugin once installed (e.g. `/second-brain:file-inbox`).
 | `init-vault` | Scaffolds a fresh vault from the bundled template (folder layout, `CLAUDE.md` conventions, `index.md`, `.obsidian/` config, `.gitignore`) and git-inits it. Refuses to overwrite a non-empty directory. |
 | `file-inbox` | Files the vault's pending `inbox/` queue into `wiki/` (via the librarian) and `journal/` (via the journal extractor→grouper), then makes one commit. |
 | `rebuild-journal` | Re-extracts named sessions and merges their work into journal day-files, non-destructively. |
+| `doctor` | Health-checks the capture pipeline — verifies `vault_path` resolves, the vault looks valid, and captures are landing. Run if sessions aren't showing up. |
 
 ### Agents (subagents)
 

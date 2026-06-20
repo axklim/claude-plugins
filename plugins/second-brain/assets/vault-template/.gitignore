@@ -1,3 +1,8 @@
+# raw/ is intentionally NOT ignored: it is the verbatim transcript archive that file-inbox and
+# rebuild-journal read from, so it must be tracked for the vault to work across machines. It is
+# committed UNREDACTED — keep this vault in a PRIVATE repo, never push to a shared remote.
+# See the plugin README's Privacy note.
+
 .obsidian/workspace.json
 .idea/
 

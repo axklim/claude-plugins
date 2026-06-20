@@ -34,10 +34,16 @@ Scaffold a new, empty vault from the plugin's bundled template.
    git -C "$TARGET" commit -qm "chore: initialize second-brain vault from template"
    ```
 
-6. **Point capture at the vault.** Tell the user to set the plugin's `vault_path` config to this
-   directory (via `/plugin` config) if it isn't already, so the `SessionEnd` hook captures here.
-   Sessions run *inside* the vault are intentionally skipped (self-capture guard), so they should
-   work in their other projects to generate captures.
+6. **Point capture at the vault, and confirm it.** Capture only works once the plugin's
+   `vault_path` config points here. Read `$CLAUDE_PLUGIN_OPTION_VAULT_PATH`:
+   - If it already resolves to this vault, echo to the user: "Capture target: `<resolved path>`
+     — sessions will be captured here."
+   - If it is unset or points elsewhere, tell the user to set it to this directory (via `/plugin`
+     config) and warn that **until then no sessions are captured** — the hook is a silent no-op
+     when `vault_path` is unset or unresolvable.
+   Sessions run *inside* the vault are intentionally skipped (self-capture guard), so the user
+   should work in their other projects to generate captures.
 
-7. **Report:** the created path, the files scaffolded, and the next steps (set `vault_path`, then
-   run `/second-brain:file-inbox` after some sessions accumulate).
+7. **Report:** the created path, the files scaffolded, the resolved capture target (or the
+   warning that `vault_path` is not yet set), and the next steps — run `/second-brain:doctor` to
+   confirm capture is live, then `/second-brain:file-inbox` after some sessions accumulate.
