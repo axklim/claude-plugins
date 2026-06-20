@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/session-capture.sh\" \"${user_config.vault_path}\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
