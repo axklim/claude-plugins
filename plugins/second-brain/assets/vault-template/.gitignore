@@ -1,0 +1,13 @@
+# raw/ is intentionally NOT ignored: it is the verbatim transcript archive that file-inbox and
+# rebuild-journal read from, so it must be tracked for the vault to work across machines. It is
+# committed UNREDACTED — keep this vault in a PRIVATE repo, never push to a shared remote.
+# See the plugin README's Privacy note.
+
+.obsidian/workspace.json
+.idea/
+
+# Transient capture queue — one pointer per pending session, written by the capture hook
+# and deleted on filing. Fully reconstructible from raw/, so never committed; the folder
+# itself ships via the tracked .keep below.
+/inbox/*
+!/inbox/.keep
