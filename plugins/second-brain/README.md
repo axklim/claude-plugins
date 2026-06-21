@@ -27,6 +27,7 @@ Namespaced under the plugin once installed (e.g. `/second-brain:file-inbox`).
 | `file-inbox` | Files the vault's pending `inbox/` queue into `wiki/` (via the librarian) and `journal/` (via the journal extractor→grouper), then makes one commit. |
 | `rebuild-journal` | Re-extracts named sessions and merges their work into journal day-files, non-destructively. |
 | `doctor` | Health-checks the capture pipeline — verifies `vault_path` resolves, the vault looks valid, and captures are landing. Run if sessions aren't showing up. |
+| `sync` | Refresh the vault's imported conventions and the `~/.claude` recall file from the plugin after a `/plugin update`. |
 
 ### Agents (subagents)
 
@@ -46,10 +47,11 @@ enqueues an `inbox/` pointer. No LLM, fast and deterministic.
 
 ### Vault CLAUDE.md
 
-The scaffolded vault's `CLAUDE.md` imports the plugin's canonical conventions via
-`@.second-brain/conventions.md`. The conventions file is written by `init-vault` and refreshed by
-`/second-brain:sync`, so they always match the installed plugin version. Add project-specific
-overrides in the `## Your overrides` section — they take precedence over the import.
+The plugin's vault conventions live in `assets/vault-conventions.md`. `/second-brain:init-vault`
+copies them into the new vault at `.second-brain/conventions.md`, and the vault's small `CLAUDE.md`
+imports them with `@.second-brain/conventions.md` — so you can add your own overrides in that
+`CLAUDE.md` (lines below the import win). After a `/plugin update`, run `/second-brain:sync` to
+refresh the copy.
 
 ## Setup
 
@@ -70,12 +72,13 @@ file them: `/second-brain:file-inbox`.
 
 ## Recall in other projects
 
-Capture and conventions cover working *inside* the vault. To let Claude consult the brain from
-*other* projects, add a small recall block to your user-scope `~/.claude/CLAUDE.md`:
-`/second-brain:init-vault` offers to add it for you, and `/second-brain:doctor` reports whether
-it's wired. The block frames the vault as Claude's **own memory** — consult it *proactively* (and
-**before asking you**) whenever it needs prior context — plus the navigation map (journal for
-"what/when", wiki for "what do I know about X"). It's the canonical `assets/recall-instruction.md`.
+Conventions cover working *inside* the vault. To let Claude consult the brain from *other*
+projects, recall lives in `~/.claude/second-brain/recall.md` and is imported by a single line —
+`@~/.claude/second-brain/recall.md` — in your user-scope `~/.claude/CLAUDE.md`.
+`/second-brain:init-vault` offers to add that line (a one-time external-import approval the first
+time), `/second-brain:sync` refreshes the recall file after a plugin update, and
+`/second-brain:doctor` reports whether it's wired. The block frames the vault as Claude's **own
+memory** — consult it *proactively* (before asking you) whenever it needs prior context.
 
 ## How the pieces fit
 
