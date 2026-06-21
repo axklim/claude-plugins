@@ -71,7 +71,8 @@ file them: `/second-brain:file-inbox`.
 Capture and conventions cover working *inside* the vault. To let Claude consult the brain from
 *other* projects, add a small recall block to your user-scope `~/.claude/CLAUDE.md`:
 `/second-brain:init-vault` offers to add it for you, and `/second-brain:doctor` reports whether
-it's wired. The block tells Claude where the vault is and how to query it on demand (journal for
+it's wired. The block frames the vault as Claude's **own memory** — consult it *proactively* (and
+**before asking you**) whenever it needs prior context — plus the navigation map (journal for
 "what/when", wiki for "what do I know about X"). It's the canonical `assets/recall-instruction.md`.
 
 ## How the pieces fit
