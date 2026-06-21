@@ -44,10 +44,12 @@ A `SessionEnd` command hook (`hooks/hooks.json`) runs `hooks/session-capture.sh`
 session: it copies the transcript into `raw/<event>/<YYYY-MM>/`, writes write-once metadata, and
 enqueues an `inbox/` pointer. No LLM, fast and deterministic.
 
-A `SessionStart` command hook (`hooks/session-context.sh`) injects the plugin's canonical vault
-conventions (`assets/vault-conventions.md`) into context **when you're working inside the vault**,
-so the conventions always match the installed plugin version and update with `/plugin update`. The
-scaffolded vault's own `CLAUDE.md` is just a thin stub. Outside the vault this hook does nothing.
+### Vault CLAUDE.md
+
+The scaffolded vault's `CLAUDE.md` imports the plugin's canonical conventions via
+`@.second-brain/conventions.md`. The conventions file is written by `init-vault` and refreshed by
+`/second-brain:sync`, so they always match the installed plugin version. Add project-specific
+overrides in the `## Your overrides` section — they take precedence over the import.
 
 ## Setup
 

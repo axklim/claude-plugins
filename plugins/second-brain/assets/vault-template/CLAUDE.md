@@ -1,13 +1,13 @@
 # CLAUDE.md
 
-This is a **second-brain** Obsidian vault -- a personal knowledge base of notes, not code.
+This is a **second-brain** Obsidian vault — a personal knowledge base of notes, not code.
 
-The working conventions for this vault (how to organize, write, link, and file notes) are
-provided **live by the second-brain plugin** at session start, so they always match the
-installed plugin version -- they are intentionally **not** duplicated here.
+The working conventions are maintained by the `second-brain` plugin and imported below. After a
+plugin update, refresh the imported copy with `/second-brain:sync`.
 
-- File captured sessions with `/second-brain:file-inbox`.
-- Diagnose capture and recall with `/second-brain:doctor`.
+@.second-brain/conventions.md
 
-If the **second-brain plugin** is not installed, see
-https://github.com/axklim/claude-plugins/tree/main/plugins/second-brain for the conventions.
+## Your overrides
+
+Add or override conventions here — lines below the import take precedence. (`.second-brain/conventions.md`
+is a plain file the plugin manages; edit your overrides here, not there.)
