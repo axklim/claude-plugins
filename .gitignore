@@ -1,3 +1,6 @@
 # Skill eval workspaces
 */evals/.runs/
 .DS_Store
+
+# JetBrains IDE config
+.idea/
