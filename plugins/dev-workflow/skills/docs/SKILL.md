@@ -7,7 +7,7 @@ description: >-
   "document this change", or asks whether the README/CLAUDE.md need updating after a
   feature, config change, or refactor — even if they don't say the word "skill". It
   dispatches the bundled `documentation` review agent to find gaps, then applies the
-  fixes and reports what changed.
+  fixes, commits them, and reports what changed.
 ---
 
 # Update documentation
@@ -15,8 +15,8 @@ description: >-
 Keep this project's docs aligned with the code. The heavy lifting of *deciding what
 needs to change* belongs to the `documentation` agent — it has the gap-detection rules and
 a per-project memory of each repo's doc conventions. This skill's job is to run that agent,
-then **apply** the changes it surfaces (the agent itself is deliberately report-only) and tell
-the user what moved.
+**apply** the changes it surfaces (the agent itself is deliberately report-only), **commit**
+them, and tell the user what moved.
 
 Treat the agent as the single source of truth for *what* to document. Don't re-implement
 its gap-detection logic here — if its rules need tuning, that lives in the `documentation`
@@ -70,19 +70,50 @@ For every reported gap, open the target file and integrate the change:
 Only touch **project** docs (this repo's README.md, CLAUDE.md, and other *.md files).
 Never edit the user's global `~/.claude/CLAUDE.md`.
 
-### 5. Summarize and hand back
+### 5. Commit the documentation changes
+
+Commit the docs you just edited so the working tree returns to clean — that clean state is
+what lets a follow-up `/restructure-commits` pick the change up without tripping its
+"working tree must be clean" precondition.
+
+- **Stage only the files you touched.** Add the specific doc paths you edited (and any new
+  doc file you created) — never `git add -A`. Any unrelated work already in the tree must
+  stay uncommitted and untouched.
+- **One commit for the whole docs pass.** Write a Conventional Commits `docs:` subject (≤72
+  chars) that names what moved (e.g. `docs: document webhook endpoints and the retry
+  convention`). You have the gap list and the edits in front of you, so write the message
+  directly — no need to dispatch the `commit-message` agent. If it needs a body, wrap it at ~72
+  columns (a commit message is read in the terminal). Append the footer:
+
+  ```
+  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  ```
+
+- **Commit only those paths, and don't push.** Pass the paths explicitly so a partial commit
+  excludes anything else that happened to be staged; leave pushing (and any squash/rebase) to
+  `/restructure-commits` or the user:
+
+  ```bash
+  git add <doc paths> && git commit -F <message-file> -- <doc paths>
+  ```
+
+### 6. Summarize and hand back
 
 Report concisely:
 
 - Which files you changed and which sections (e.g. "README.md → added 'Webhook endpoints'
   under Endpoints; CLAUDE.md → noted the new retry convention").
+- The commit you created (its `docs:` subject).
 - Anything the agent flagged that you intentionally left out, and why.
 
-Stop there. Don't commit or push — leave that to the user, who reviews changes
-commit-by-commit.
+The change is committed but **not pushed** — leave pushing and any history rewrite to
+`/restructure-commits` or the user.
 
 ## Notes
 
+- This skill **commits** (one `docs:` commit) but never **pushes**. The commit is the point:
+  it returns the tree to clean so the docs ride along when `/restructure-commits` squashes the
+  branch, instead of blocking it on a dirty tree.
 - README.md is for humans; CLAUDE.md is for AI agents. A single code change can warrant
   edits to both — apply each separately, in the register that fits its audience.
 - If the agent's report is ambiguous about placement or wording, resolve it with the file

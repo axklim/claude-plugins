@@ -24,7 +24,7 @@ plugins become installable in any project, on any machine or account.
 
 | Plugin | What it gives you |
 |--------|-------------------|
-| [`dev-workflow`](plugins/dev-workflow) | Branch/PR lifecycle skills (`/premerge`, `/merge`), a docs-sync skill (`/docs`), and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder). |
+| [`dev-workflow`](plugins/dev-workflow) | Branch/PR lifecycle skills (`/premerge`, `/restructure-commits`, `/merge`), a docs-sync skill (`/docs`), and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder). |
 | [`second-brain`](plugins/second-brain) | An LLM-wiki memory pattern: a `SessionEnd` hook captures every session, then skills file it into a topical wiki + temporal journal. Plain Markdown — view in Obsidian or any editor. |
 
 ## Layout
@@ -34,7 +34,7 @@ plugins become installable in any project, on any machine or account.
 plugins/
 ├── dev-workflow/
 │   ├── .claude-plugin/plugin.json
-│   ├── skills/{premerge,merge,docs}/SKILL.md
+│   ├── skills/{premerge,restructure-commits,merge,docs}/SKILL.md
 │   └── agents/{commit-message,documentation,reviewer}.md
 └── second-brain/
     ├── .claude-plugin/plugin.json

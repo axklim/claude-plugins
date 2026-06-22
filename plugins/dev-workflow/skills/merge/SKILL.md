@@ -2,7 +2,7 @@
 name: merge
 description: >-
   Merge the current feature branch's PR into main (rebase-merge) and clean up — update main,
-  delete the branch (local + remote), clear the /premerge backup tags, and prune. Run this ONLY
+  delete the branch (local + remote), clear the /restructure-commits backup tags, and prune. Run this ONLY
   when the user explicitly invokes /merge. Never trigger it from conversational context or infer
   it from phrases like "that's ready", "ship it", or "merge this" — because it merges into main
   and deletes branches, it must not run on its own. The explicit /merge invocation is the
@@ -11,7 +11,7 @@ description: >-
 
 # Merge the branch and clean up
 
-Take a merge-ready branch (typically straight after `/premerge`) the last mile: rebase-merge its
+Take a merge-ready branch (typically straight after `/restructure-commits`) the last mile: rebase-merge its
 PR into `main`, then return the repo to a clean baseline.
 
 **GitHub is the gatekeeper for whether a PR *can* merge** — branch protection, required checks,
@@ -44,8 +44,8 @@ the PR's approval/branch-protection state is GitHub's call, so don't re-ask befo
 gh pr merge <n> --rebase --delete-branch
 ```
 
-- **Rebase-merge** lands the clean commits `/premerge` produced directly on `main`, with no
-  merge commit. This pairs with `/premerge`, which already rebased the branch onto the latest
+- **Rebase-merge** lands the clean commits `/restructure-commits` produced directly on `main`, with no
+  merge commit. This pairs with `/restructure-commits`, which already rebased the branch onto the latest
   `main`. If your project squashes or uses merge commits instead, swap `--rebase` for
   `--squash` / `--merge`.
 - `--delete-branch` removes the branch on the remote and locally (gh switches off it first).
@@ -63,15 +63,15 @@ git pull --ff-only
 `--ff-only` keeps `main` a clean fast-forward; if it can't, stop and surface that rather than
 making a merge commit on a protected branch.
 
-### 4. Clear the branch's /premerge backup tags
+### 4. Clear the branch's /restructure-commits backup tags
 
-`/premerge` left a local `premerge-backup/<branch>-<timestamp>` tag (branch slashes turned to
+`/restructure-commits` left a local `restructure-commits-backup/<branch>-<timestamp>` tag (branch slashes turned to
 dashes). Now that the branch is merged, those snapshots are obsolete — delete the ones for
 *this* branch (the name captured in step 1), anchoring the glob on the timestamp's leading digit
 so a sibling branch's tags aren't caught:
 
 ```bash
-prefix="premerge-backup/$(printf '%s' '<branch>' | tr / -)-"
+prefix="restructure-commits-backup/$(printf '%s' '<branch>' | tr / -)-"
 tags=$(git tag -l "${prefix}[0-9]*")
 [ -n "$tags" ] && git tag -d $tags
 ```
@@ -91,8 +91,8 @@ cleared.
 
 ## Notes
 
-- This is the last step of the lifecycle: `/premerge` makes a branch merge-ready, `/merge` lands
-  it and cleans up.
+- This is the last step of the lifecycle: `/premerge` (or `/restructure-commits`) makes a branch
+  merge-ready, `/merge` lands it and cleans up.
 - `main` is only ever fast-forwarded here — never rewritten or committed to directly.
 - This skill assumes `main` is the protected trunk and the project merges via rebase. Adjust the
   default branch name and the `gh pr merge` strategy flag if your project differs.

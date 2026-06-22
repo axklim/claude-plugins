@@ -8,7 +8,7 @@
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "Branch/PR lifecycle (premerge, merge), docs sync, and review agents (code reviewer, commit-message writer, documentation gap-finder)."
+      "description": "Branch/PR lifecycle (premerge, restructure-commits, merge), docs sync, and review agents (code reviewer, commit-message writer, documentation gap-finder)."
     },
     {
       "name": "second-brain",
