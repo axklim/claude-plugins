@@ -2,7 +2,7 @@
 name: commit-message
 description: >-
   Writes a concise commit message for a given diff range in the Conventional Commits
-  format. Dispatched by commit/merge skills (e.g. /premerge) that
+  format. Dispatched by commit/merge skills (e.g. /restructure-commits) that
   need a message generated from the code change alone, deliberately isolated from conversation
   context. Returns only the message text — no Co-Authored-By trailer, no footer.
 tools: Read, Grep, Glob, Bash
