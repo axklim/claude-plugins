@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A portable dev workflow toolkit: branch/PR lifecycle skills (premerge, restructure-commits, merge), a docs-sync skill, and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder).",
   "author": {
     "name": "Aleksey (gudik)",

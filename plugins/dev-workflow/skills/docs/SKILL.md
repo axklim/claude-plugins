@@ -114,6 +114,10 @@ The change is committed but **not pushed** — leave pushing and any history rew
 - This skill **commits** (one `docs:` commit) but never **pushes**. The commit is the point:
   it returns the tree to clean so the docs ride along when `/restructure-commits` squashes the
   branch, instead of blocking it on a dirty tree.
+- **Dated, point-in-time artifacts are off-limits.** The `documentation` agent already excludes
+  historical snapshots — `docs/superpowers/**` specs/plans, `CHANGELOG.md`, `RELEASE-NOTES.md`,
+  ADRs — so they won't appear in its gap list. Don't re-add them by hand: syncing a dated design
+  doc or plan to current code rewrites history.
 - README.md is for humans; CLAUDE.md is for AI agents. A single code change can warrant
   edits to both — apply each separately, in the register that fits its audience.
 - If the agent's report is ambiguous about placement or wording, resolve it with the file
