@@ -4,3 +4,6 @@
 
 # IDE / editor
 .idea/
+
+# Claude agent-local memory (machine-generated per-project, e.g. by the dev-workflow documentation agent)
+.claude/agent-memory/

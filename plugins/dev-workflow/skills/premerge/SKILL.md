@@ -55,14 +55,19 @@ The invocation carries two independent things — a docs toggle and a commit-str
 Check these *before* running anything, so /premerge never leaves a half-done run (docs committed but
 no PR opened):
 
-- **Must be on a feature branch, not `main`.** `main` is protected; never rewrite it. If `HEAD` is
-  `main` (or detached), stop and say so.
+- **A `main`/`master` trunk must exist.** Probe `origin/main`, `origin/master`, local `main`,
+  then local `master` (fetch first if a remote exists); if none resolves, stop with the same
+  guidance `restructure-commits` gives — *"No `main` or `master` trunk found … create one first,
+  e.g. `git branch main <ref>`, then re-run."* **Don't create it.** Checking here fails fast,
+  before the `docs` pass commits anything.
+- **Must be on a feature branch, not the trunk.** The trunk is protected; never rewrite it. If
+  the current branch is the trunk (`main`/`master`) or `HEAD` is detached, stop and say so.
 - **Working tree must be clean.** `docs` commits its own edits, and `restructure-commits` refuses to
   squash over uncommitted changes. If `git status --porcelain` is non-empty, stop and show what's
   dirty — let the user commit or stash first.
 
-(`restructure-commits` re-checks both in its own step 1; checking here too just avoids starting a
-run that can't finish.)
+(`restructure-commits` re-checks all three in its own step 1; checking here too just avoids starting
+a run that can't finish.)
 
 ### 2. Sync the docs — unless skipped
 
@@ -78,9 +83,9 @@ If docs were skipped, note that in the final summary and move straight to step 3
 
 Invoke the **`restructure-commits`** skill via the Skill tool (`dev-workflow:restructure-commits`),
 forwarding any commit-structure instruction from the invocation as its arguments (or none, for the
-default squash). It fetches `main`, tags a backup, builds the merge-ready commit(s) — folding the
-`docs:` commit into the squash — rebases onto the latest `main`, force-pushes, and opens or syncs
-the PR.
+default squash). It resolves the trunk (`main` or `master`), tags a backup, builds the merge-ready
+commit(s) — folding the `docs:` commit into the squash — rebases onto the latest trunk, and (with a
+remote) force-pushes and opens or syncs the PR.
 
 If it stops on a rebase conflict (or a rejected `--force-with-lease`), hand back exactly as it does
 — don't paper over it. The user resolves, then re-invokes `/premerge` (or `/restructure-commits`) to
@@ -92,17 +97,19 @@ Give one combined report so the user can review, recover, or amend:
 
 - **Docs:** what the docs pass changed (files / sections) and the `docs:` commit subject — or that
   it was skipped, or found no gaps.
-- **Restructure:** the backup tag (recovery point), the final commit message(s), the push result,
-  and the PR link.
+- **Restructure:** the backup tag (recovery point), the final commit message(s), and — with a
+  remote — the push result and PR link. In a **local-only** repo (no remote), surface what
+  `restructure-commits` reported instead: push and PR skipped, and that the user should run
+  `/merge` to integrate the rebased branch into the local trunk.
 
 ## Notes
 
 - /premerge is the **front of the lifecycle**: it makes a branch merge-ready, the user reviews, then
-  `/merge` lands it on `main` and cleans up.
+  `/merge` lands it on the trunk and cleans up.
 - It adds nothing to history that `docs` and `restructure-commits` don't already do — it just runs
   them in the right order behind one precondition guard. **If either step's behavior needs to
   change, change it in that skill, not here.**
 - Skipping docs (`no docs`) makes /premerge identical to `/restructure-commits`; that standalone
   skill is the canonical no-docs path.
-- Assumes `main` is the protected trunk and the project merges via rebase — the same assumptions as
-  the skills it chains. Adjust them there if your project differs.
+- Resolves the trunk automatically (`main` or `master`) and merges via rebase — the same handling as
+  the skills it chains. Adjust those skills if your project uses a different trunk name or merge strategy.
