@@ -24,43 +24,84 @@ governs whether the merge is allowed at all.
 
 ## Workflow
 
-### 1. Identify the branch and its PR
+### 1. Identify the branch, the trunk, and the PR
 
 Default to the current branch (or the one the user named); capture the name *before* anything
-switches it. Refuse if it's `main`. Find the open PR:
+switches it — call it `<feature>`. Then resolve the trunk and the remote:
 
 ```bash
-gh pr view --json number,state,title,url
+feature=$(git branch --show-current)
+git remote | grep -q . && HAS_REMOTE=1 || HAS_REMOTE=
+[ -n "$HAS_REMOTE" ] && git fetch origin --quiet
+base=""; trunk=""
+for ref in origin/main origin/master refs/heads/main refs/heads/master; do
+  if git rev-parse --verify --quiet "$ref" >/dev/null; then
+    base="$ref"; trunk="${ref##*/}"; break
+  fi
+done
 ```
 
-If there's no open PR for the branch, stop and say so — there's nothing to merge.
+- **A `main`/`master` trunk must exist.** If `base` is empty, stop — and do **not** create one:
 
-### 2. Merge the PR
+  > No `main` or `master` trunk found. `/merge` integrates into the trunk and can't run without
+  > it. Create one first, e.g. `git branch main <ref>`, then re-run.
 
-Merge straight away — **no confirmation prompt**. The `/merge` invocation is the go-ahead, and
-the PR's approval/branch-protection state is GitHub's call, so don't re-ask before merging:
+- **Refuse if `<feature>` is the trunk itself** (`main`/`master`) — there's nothing to merge.
+
+Then find the PR **only when there's a remote**:
+
+```bash
+[ -n "$HAS_REMOTE" ] && gh pr view --json number,state,title,url
+```
+
+With a remote and **no open PR** for the branch, stop and say so — there's nothing to merge.
+(With no remote there is no PR; Step 2 takes the local path.)
+
+### 2. Merge — PR (remote) or fast-forward (local-only)
+
+**Local-only (no remote) → fast-forward the trunk locally and delete the branch.** This is
+safe because `/restructure-commits` already rebased `<feature>` onto the trunk, so `<trunk>` is
+an ancestor of the feature tip — the merge is a pure fast-forward, never a merge commit:
+
+```bash
+git switch "$trunk"
+git merge --ff-only "$feature"
+git branch -d "$feature"
+```
+
+If `--ff-only` is **rejected**, stop — note that the `git switch` already moved you onto
+`<trunk>`: *"`<trunk>` can't fast-forward to `<feature>` (you're now on `<trunk>`) — switch
+back with `git switch <feature>` and run `/restructure-commits` first."* Nothing was changed,
+so there's no cleanup; once restructured, re-run `/merge`.
+
+**With a remote → merge the PR.** Merge straight away — **no confirmation prompt**. The
+`/merge` invocation is the go-ahead, and the PR's approval/branch-protection state is GitHub's
+call, so don't re-ask before merging:
 
 ```bash
 gh pr merge <n> --rebase --delete-branch
 ```
 
-- **Rebase-merge** lands the clean commits `/restructure-commits` produced directly on `main`, with no
-  merge commit. This pairs with `/restructure-commits`, which already rebased the branch onto the latest
-  `main`. If your project squashes or uses merge commits instead, swap `--rebase` for
-  `--squash` / `--merge`.
+- **Rebase-merge** lands the clean commits `/restructure-commits` produced directly on the trunk,
+  with no merge commit. This pairs with `/restructure-commits`, which already rebased the branch
+  onto the latest trunk. If your project squashes or uses merge commits instead, swap `--rebase`
+  for `--squash` / `--merge`.
 - `--delete-branch` removes the branch on the remote and locally (gh switches off it first).
 - If GitHub **rejects** the merge — failing required checks, conflicts, branch-protection rules —
   stop and surface the reason. Don't reach for `--admin` or otherwise override GitHub's gate;
   whether to bypass it is the user's separate call.
 
-### 3. Update local main
+### 3. Update local trunk — if there's a remote
+
+In local-only mode this is already done: Step 2 fast-forwarded `<trunk>` and you're on it, so
+skip. With a remote:
 
 ```bash
-git switch main        # usually already here — gh moved off the deleted branch
+git switch "$trunk"     # usually already here — gh moved off the deleted branch
 git pull --ff-only
 ```
 
-`--ff-only` keeps `main` a clean fast-forward; if it can't, stop and surface that rather than
+`--ff-only` keeps the trunk a clean fast-forward; if it can't, stop and surface that rather than
 making a merge commit on a protected branch.
 
 ### 4. Clear the branch's /restructure-commits backup tags
@@ -76,23 +117,28 @@ tags=$(git tag -l "${prefix}[0-9]*")
 [ -n "$tags" ] && git tag -d $tags
 ```
 
-### 5. Prune stale references
+### 5. Prune stale references — if there's a remote
 
 ```bash
-git fetch --prune
+[ -n "$HAS_REMOTE" ] && git fetch --prune
 ```
 
 Drops remote-tracking refs for branches deleted on the remote, so `git branch -a` stays honest.
+With no remote there's nothing to prune.
 
 ### 6. Report
 
-Summarize: PR merged (rebase), `main` updated, branch deleted (local + remote), backup tags
-cleared.
+Summarize, naming the resolved `<trunk>` and the mode:
+- **With a remote:** PR merged (rebase), `<trunk>` updated, branch deleted (local + remote),
+  backup tags cleared.
+- **Local-only:** `<trunk>` fast-forwarded to the feature tip, feature branch deleted locally,
+  backup tags cleared (no PR / remote involved).
 
 ## Notes
 
 - This is the last step of the lifecycle: `/premerge` (or `/restructure-commits`) makes a branch
   merge-ready, `/merge` lands it and cleans up.
-- `main` is only ever fast-forwarded here — never rewritten or committed to directly.
-- This skill assumes `main` is the protected trunk and the project merges via rebase. Adjust the
-  default branch name and the `gh pr merge` strategy flag if your project differs.
+- The trunk is only ever fast-forwarded here — never rewritten or committed to directly.
+- This skill resolves the trunk automatically (`main` or `master`) and merges via rebase. If your
+  project uses a different trunk name or merge strategy, adjust the `gh pr merge` strategy flag
+  (`--squash` / `--merge`).
