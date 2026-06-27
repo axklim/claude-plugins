@@ -204,7 +204,8 @@ Neither asks for confirmation; opening/syncing the PR is the point of getting me
     local `main`. Skipped push + PR (no remote). `main` not advanced — run `/merge` to
     integrate."*
 - Hand the branch back **merge-ready** — `/merge` takes it from there: it merges the PR
-  (rebase-merge) and cleans up the branch.
+  (squash by default) and cleans up the branch.
 - This skill resolves the trunk automatically (`main` or `master`, remote preferred over local)
-  and merges via **rebase**. If your project uses a different trunk name or merge strategy,
-  adjust steps 1–8 and the paired `/merge` skill accordingly.
+  and squashes the branch to a clean commit; `/merge` then squash-merges that PR by default. If
+  your project uses a different trunk name or merge strategy, adjust steps 1–8 and the paired
+  `/merge` skill accordingly.

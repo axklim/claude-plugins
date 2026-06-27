@@ -39,7 +39,7 @@ never trigger from conversational phrasing.
 |-------|------|
 | `premerge` | The everyday "make this merge-ready" command: chains `docs` (sync + `docs:` commit), then `restructure-commits` (rebase, squash, push, open/sync PR — or, with no remote, skip push + PR). The front of the **premerge → review → merge** lifecycle. Pass `no docs` to skip the docs pass; any other instruction (e.g. "split into two commits: …") passes through to control commit structure. |
 | `restructure-commits` | Rebases the current feature branch onto the latest trunk (`main`/`master`), collapses it to a clean commit (one by default; pass plain-language instructions to split), generates a Conventional Commits message, and opens/syncs the PR (skipped in a local-only repo, leaving a clean rebased branch). Tags a backup first, so the whole run is reversible. The canonical no-docs prepare path. |
-| `merge` | Takes a merge-ready branch the last mile: rebase-merges its PR into the trunk (`main`/`master`) — or, in a local-only repo, fast-forwards the local trunk to the branch — updates the trunk, deletes the branch, clears the `restructure-commits` backup tags, and prunes. |
+| `merge` | Takes a merge-ready branch the last mile: squash-merges its PR into the trunk (`main`/`master`) by default (override with `rebase`/`merge`) — or, in a local-only repo, fast-forwards the local trunk to the branch — updates the trunk, deletes the branch, clears the `restructure-commits` backup tags, and prunes. |
 | `docs` | Dispatches the `documentation` agent to find doc gaps from recent changes, **applies** the fixes to README.md / CLAUDE.md / other `*.md`, and **commits** them as a single `docs:` commit (no push). Returns the tree to clean so the docs can ride along into a later `/restructure-commits`. |
 
 ### Agents (subagents)
@@ -73,13 +73,16 @@ local trunk — no `gh`, no PR.*
 
 - **Trunk & merge strategy.** The trunk may be **`main` or `master`** (resolved automatically,
   `main` preferred); all three skills **require** one of them to exist and **never create one** —
-  if neither exists they halt and tell you to create it (e.g. `git branch main <ref>`). They
-  merge by **rebase**; if your repo uses a different strategy, adjust the `gh pr merge` flag
-  (`--squash` / `--merge`) in `skills/merge/SKILL.md`.
+  if neither exists they halt and tell you to create it (e.g. `git branch main <ref>`). `/merge`
+  merges by **squash by default**; pass `rebase` or `merge` to override per-merge (`/merge rebase`
+  lands the branch's commits verbatim, `/merge merge` makes a merge commit). To change the
+  project-wide default, adjust the strategy resolution in Step 2 of `skills/merge/SKILL.md`.
 - **Local-only repos (no remote).** With no remote configured the lifecycle degrades cleanly:
   `restructure-commits` squashes and rebases onto the **local** trunk and **skips push + PR**;
-  `/merge` fast-forwards the local trunk to the branch and deletes it. No GitHub, no `gh`
-  required. (`scripts/verify-local-only.sh` exercises these paths.)
+  `/merge` fast-forwards the local trunk to the branch and deletes it. Passing an explicit strategy
+  token there (`/merge rebase` etc.) is an error — with no PR to apply a strategy to, `/merge` stops
+  and points you at `/premerge`; bare `/merge` still fast-forwards. No GitHub, no `gh` required.
+  (`scripts/verify-local-only.sh` exercises these paths.)
 - **Tooling.** `merge` (and the push/PR steps of `restructure-commits`) use the GitHub CLI (`gh`)
   **when a remote is configured** — install and authenticate it for remote repos. Local-only
   repos need neither.
