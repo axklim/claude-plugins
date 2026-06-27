@@ -111,5 +111,6 @@ Give one combined report so the user can review, recover, or amend:
   change, change it in that skill, not here.**
 - Skipping docs (`no docs`) makes /premerge identical to `/restructure-commits`; that standalone
   skill is the canonical no-docs path.
-- Resolves the trunk automatically (`main` or `master`) and merges via rebase — the same handling as
-  the skills it chains. Adjust those skills if your project uses a different trunk name or merge strategy.
+- Resolves the trunk automatically (`main` or `master`); `/merge` squash-merges by default — the
+  same handling as the skills it chains. Adjust those skills if your project uses a different trunk
+  name or merge strategy.
