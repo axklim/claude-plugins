@@ -26,6 +26,7 @@ plugins become installable in any project, on any machine or account.
 |--------|-------------------|
 | [`dev-workflow`](plugins/dev-workflow) | Branch/PR lifecycle skills (`/premerge`, `/restructure-commits`, `/merge`) that also run in local-only repos with no remote, a docs-sync skill (`/docs`), and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder). |
 | [`second-brain`](plugins/second-brain) | An LLM-wiki memory pattern: a `SessionEnd` hook captures every session, then skills file it into a topical wiki + temporal journal. Plain Markdown — view in Obsidian or any editor. |
+| [`common`](plugins/common) | Catch-all for skills and agents that don't yet warrant their own focused plugin — a staging area where related items get extracted into a dedicated plugin as they accumulate. |
 
 ## Layout
 
@@ -36,13 +37,16 @@ plugins/
 │   ├── .claude-plugin/plugin.json
 │   ├── skills/{premerge,restructure-commits,merge,docs}/SKILL.md
 │   └── agents/{commit-message,documentation,reviewer}.md
-└── second-brain/
+├── second-brain/
+│   ├── .claude-plugin/plugin.json
+│   ├── hooks/{hooks.json,session-capture.sh}
+│   ├── skills/{init-vault,file-inbox,rebuild-journal}/SKILL.md
+│   ├── agents/{librarian,journal-extractor,journal-grouper}.md
+│   ├── assets/vault-template/        # scaffolded by /init-vault
+│   └── tests/
+└── common/                          # catch-all; extract groups into their own plugin as they grow
     ├── .claude-plugin/plugin.json
-    ├── hooks/{hooks.json,session-capture.sh}
-    ├── skills/{init-vault,file-inbox,rebuild-journal}/SKILL.md
-    ├── agents/{librarian,journal-extractor,journal-grouper}.md
-    ├── assets/vault-template/        # scaffolded by /init-vault
-    └── tests/
+    └── skills/wdyt/SKILL.md
 ```
 
 The marketplace and the plugin live in this one repo; each plugin entry in
