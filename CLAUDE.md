@@ -27,3 +27,19 @@ type to semver:
 - a breaking change → major
 
 Repo-level changes that touch no `plugins/<name>/` tree (root docs, meta) need no plugin bump.
+
+## Opening a pull request
+
+`origin` points at the upstream repo (`axklim/claude-plugins`), which most contributors can't
+push to directly — pushing a branch there returns a `403`. Work through your fork instead: this
+clone keeps a `fork` remote (`<your-account>/claude-plugins`). Push the feature branch to `fork`,
+then open the PR from your fork into upstream `main`:
+
+```
+git push -u fork <branch>
+gh pr create --repo axklim/claude-plugins --base main --head <fork-owner>:<branch>
+```
+
+`<fork-owner>` is the account that owns the `fork` remote. If you *do* have write access to
+`origin`, push there and open the PR with the branch name alone (`--head <branch>`).
+
