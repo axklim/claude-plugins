@@ -14,6 +14,11 @@
       "name": "second-brain",
       "source": "./plugins/second-brain",
       "description": "Personal memory for Claude Code: a SessionEnd hook captures every session, then skills file it into a topical wiki + temporal journal (librarian + journal extractor/grouper). Plain Markdown — view in any editor."
+    },
+    {
+      "name": "common",
+      "source": "./plugins/common",
+      "description": "Catch-all for skills and agents that don't yet warrant their own focused plugin — a staging area where related items get extracted into a dedicated plugin as they accumulate."
     }
   ]
 }
