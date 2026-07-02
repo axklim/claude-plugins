@@ -1,20 +1,20 @@
 ---
-name: babysit-pr
+name: babysit
 description: >-
   Shepherd an already-open PR through CI until it is merge-ready or genuinely blocked. Use when the
-  user runs /babysit-pr or asks to "babysit the PR", "watch the PR", "keep an eye on the PR",
+  user runs /babysit or asks to "babysit the PR", "watch the PR", "keep an eye on the PR",
   "monitor CI", "poll the checks", or "wait for CI to go green". It watches the checks; when a
   REQUIRED check fails it reads the failure log, fixes mechanical breakage, pushes, and re-watches —
   then reports the one real blocker if any remains. Defaults to the current branch's PR; accepts an
   optional PR number or URL. It sits between /premerge (get merge-ready) and /merge (land it):
-  premerge → babysit-pr → merge. It does not open PRs, rebase, or merge.
+  premerge → babysit → merge. It does not open PRs, rebase, or merge.
 ---
 
 # Babysit a PR through CI
 
 Take an **already-open** PR and shepherd it to a settled state — every required check green (so
 `/merge` can land it), or a clearly named blocker that needs a human. This is the middle of the
-lifecycle: **`/premerge` → babysit-pr → `/merge`**. `/premerge` opens and shapes the PR; this skill
+lifecycle: **`/premerge` → babysit → `/merge`**. `/premerge` opens and shapes the PR; this skill
 watches it converge; `/merge` merges it. Babysitting **never opens PRs, rebases, or merges** — when
 CI is green it hands back to the user (or `/merge`).
 
@@ -30,9 +30,9 @@ One optional token names the PR; with no argument it targets **the current branc
 
 | Invocation | Target |
 |---|---|
-| `/babysit-pr` | the current branch's PR (`gh pr view`) |
-| `/babysit-pr 123` | PR #123 in this repo |
-| `/babysit-pr https://github.com/owner/repo/pull/123` | that PR (may be another repo) |
+| `/babysit` | the current branch's PR (`gh pr view`) |
+| `/babysit 123` | PR #123 in this repo |
+| `/babysit https://github.com/owner/repo/pull/123` | that PR (may be another repo) |
 
 ## Workflow
 
@@ -177,7 +177,7 @@ blocker** if one remains (a required failure needing a human, or a review/confli
   It does **not** open PRs, rebase, restructure commits, or merge — `/premerge` gets a branch
   merge-ready (and rebases), `/merge` lands it. If babysitting hits a conflict or a needed rebase,
   it hands back to `/premerge`.
-- **Lifecycle:** `/premerge` → **babysit-pr** → `/merge`. Reach for this when the PR is open and you
+- **Lifecycle:** `/premerge` → **babysit** → `/merge`. Reach for this when the PR is open and you
   just need CI to converge before merging.
 - The only history this skill adds is mechanical fix commits on the PR's own feature branch, pushed
   so CI re-runs. It never touches the trunk.
