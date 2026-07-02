@@ -24,7 +24,7 @@ plugins become installable in any project, on any machine or account.
 
 | Plugin | What it gives you |
 |--------|-------------------|
-| [`dev-workflow`](plugins/dev-workflow) | Branch/PR lifecycle skills (`/premerge`, `/restructure-commits`, `/merge`) that also run in local-only repos with no remote, a docs-sync skill (`/docs`), and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder). |
+| [`dev-workflow`](plugins/dev-workflow) | Branch/PR lifecycle skills (`/premerge`, `/restructure-commits`, `/babysit-pr`, `/merge`) that also run in local-only repos with no remote, a docs-sync skill (`/docs`), and three review agents (code reviewer, Conventional-Commits message writer, documentation gap-finder). |
 | [`second-brain`](plugins/second-brain) | An LLM-wiki memory pattern: a `SessionEnd` hook captures every session, then skills file it into a topical wiki + temporal journal. Plain Markdown — view in Obsidian or any editor. |
 | [`common`](plugins/common) | Catch-all for skills and agents that don't yet warrant their own focused plugin — a staging area where related items get extracted into a dedicated plugin as they accumulate. |
 
@@ -35,7 +35,7 @@ plugins become installable in any project, on any machine or account.
 plugins/
 ├── dev-workflow/
 │   ├── .claude-plugin/plugin.json
-│   ├── skills/{premerge,restructure-commits,merge,docs}/SKILL.md
+│   ├── skills/{premerge,restructure-commits,babysit-pr,merge,docs}/SKILL.md
 │   └── agents/{commit-message,documentation,reviewer}.md
 ├── second-brain/
 │   ├── .claude-plugin/plugin.json
