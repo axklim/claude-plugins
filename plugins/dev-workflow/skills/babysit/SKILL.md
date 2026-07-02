@@ -6,17 +6,15 @@ description: >-
   "monitor CI", "poll the checks", or "wait for CI to go green". It watches the checks; when a
   REQUIRED check fails it reads the failure log, fixes mechanical breakage, pushes, and re-watches —
   then reports the one real blocker if any remains. Defaults to the current branch's PR; accepts an
-  optional PR number or URL. It sits between /premerge (get merge-ready) and /merge (land it):
-  premerge → babysit → merge. It does not open PRs, rebase, or merge.
+  optional PR number or URL. It only watches an open PR and fixes what breaks CI — it does not open
+  PRs, rebase, or merge.
 ---
 
 # Babysit a PR through CI
 
-Take an **already-open** PR and shepherd it to a settled state — every required check green (so
-`/merge` can land it), or a clearly named blocker that needs a human. This is the middle of the
-lifecycle: **`/premerge` → babysit → `/merge`**. `/premerge` opens and shapes the PR; this skill
-watches it converge; `/merge` merges it. Babysitting **never opens PRs, rebases, or merges** — when
-CI is green it hands back to the user (or `/merge`).
+Take an **already-open** PR and shepherd it to a settled state — every required check green (so it
+can be merged), or a clearly named blocker that needs a human. Babysitting **never opens PRs,
+rebases, or merges**; it watches an open PR converge and, once CI is green, hands back to the user.
 
 **The one insight that makes this skill work: not every red check blocks the merge.** A PR's base
 branch declares a set of *required* status checks; only those gate the merge. Coverage gates,
@@ -47,8 +45,8 @@ gh pr view [<number>|<url>] \
   --json number,state,url,headRefName,baseRefName,mergeStateStatus,reviewDecision,statusCheckRollup
 ```
 
-If there's no open PR for the branch, stop and say so — there's nothing to babysit (that's
-`/premerge`'s job). Derive `owner/repo` from the PR URL (it may differ from the local repo when a
+If there's no open PR for the branch, stop and say so — there's nothing to babysit (opening a PR is
+out of scope). Derive `owner/repo` from the PR URL (it may differ from the local repo when a
 URL argument points elsewhere).
 
 ### 2. Separate REQUIRED checks from advisory ones — do this first
@@ -139,9 +137,9 @@ Green required checks don't always mean "mergeable." Once CI is green, read the 
 - **`REVIEW_REQUIRED` / approval pending** — a human gate, not a CI problem. **Report it and stop
   polling.** Don't loop waiting on a person; optionally offer to resume watching on an interval if
   the user wants.
-- **Merge conflict / behind base** — also not a CI failure. Surface it and hand back to `/premerge`
-  (rebase) — babysitting doesn't rebase.
-- **Clean and mergeable** — done; the PR is ready for `/merge`.
+- **Merge conflict / behind base** — also not a CI failure. Surface it and hand back to the user to
+  rebase — babysitting doesn't rebase.
+- **Clean and mergeable** — done; the PR is ready to merge.
 
 Optionally, surface any **new review comments** posted since babysitting started, so the user sees
 feedback that landed while CI churned.
@@ -174,10 +172,8 @@ blocker** if one remains (a required failure needing a human, or a review/confli
 ## Notes
 
 - **Scope: an already-open PR only.** Babysitting watches, diagnoses, and applies mechanical fixes.
-  It does **not** open PRs, rebase, restructure commits, or merge — `/premerge` gets a branch
-  merge-ready (and rebases), `/merge` lands it. If babysitting hits a conflict or a needed rebase,
-  it hands back to `/premerge`.
-- **Lifecycle:** `/premerge` → **babysit** → `/merge`. Reach for this when the PR is open and you
-  just need CI to converge before merging.
+  It does **not** open PRs, rebase, restructure commits, or merge — those are separate steps done
+  before or after. If babysitting hits a conflict or a needed rebase, it hands back to the user.
+- **When to reach for it:** the PR is open and you just need CI to converge before merging.
 - The only history this skill adds is mechanical fix commits on the PR's own feature branch, pushed
   so CI re-runs. It never touches the trunk.
